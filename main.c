@@ -13,7 +13,7 @@ int populationMin;
 int tempWorld[ROWS][COLS];
 int world[ROWS][COLS];
 
-void printOutWorld();
+void printOutWorld(int);
 int countNeighbours(int, int);
 void initializeWorld();
 void procesGeneration();
@@ -22,20 +22,22 @@ int getUserInput();
 
 int main()
 {
-
     srand(time(NULL));
-    int generations = getUserInput();
+    int gen;
+    printf("Welcome to GAME OF LIFE\n");
+    printf("How many generations do you want to see: ");
+    scanf("%d", &gen);
+    printf("The program will run %d generations\n", gen);
+    sleep(300000);
+    printf("STARTING GAME....");
+    sleep(300000);
 
-    printf("1");
-    for(int i = 0; i<=generations;i++){
-        printf("2");
-        initializeWorld();
-        printf("3");
+    initializeWorld();
+
+    for(int i = 0; i<=gen;i++){
         procesGeneration();
-        printf("4");
-        printOutWorld();
-        printf("5");
-        sleep(300);
+        printOutWorld(i);
+        sleep(1000000);
     }
 
 
@@ -43,7 +45,7 @@ int main()
 };
 
 int getUserInput(){
-    int g;
+    static int g;
     printf("Welcome to GAME OF LIFE\n");
     printf("How many generations do you want to see: ");
     scanf("%d", &g);
@@ -54,6 +56,7 @@ int getUserInput(){
 // ************************************************
 void initializeWorld()
 {
+    int k;
     for(int i = 0; i< ROWS; i++)
     {
         for(int j = 0; j<COLS;j++)
@@ -62,50 +65,55 @@ void initializeWorld()
                world[i][j] = -1;
                continue;
             }
-            else{ world[i][j] = rand() %3;}
+            else{
+            k = rand()%3;
+            if (k == 0){world[i][j] = 1;}
+            }
         }
     }
 };
 
 // ************************************************
 void procesGeneration(){
-    int neighbours;
-    for(int i = 0; i<ROWS;i++)
+    int neighbours,i,j;
+    for(i = 0; i<ROWS;i++)
     {
-        for(int j = 0; j <COLS; j++){
+        for(j = 0; j <COLS; j++){
+
             if(world[i][j] == -1) continue;
             neighbours = countNeighbours(i,j);
             if(world[i][j] == 1 && (neighbours <2 || neighbours >3) )
                 tempWorld[i][j] = 0;
-            if(world[i][j] == 0 && neighbours == 3)
+            else if(world[i][j] == 0 && neighbours == 3)
                 tempWorld[i][j] = 1;
 
         }
+
     }
 
     population = 0;
-    for(int i = 0; i<ROWS;i++)
+    for(i = 0; i<ROWS;i++)
     {
-        for(int j = 0; j <COLS; j++){
+        for(j = 0; j <COLS; j++){
             if (world[i][j] == -1) continue;
-            if (tempWorld[i][j] == 1){
-                population++;
-                world[i][j] = tempWorld[i][j];
-            }
+            if (tempWorld[i][j] == 1){population++;}
+            world[i][j] = tempWorld[i][j];
         }
     }
-
 };
 
 
 // ************************************************
-void printOutWorld(){
+void printOutWorld(int g){
     system("clear");
-    printf("GAME OF LIFE\n\a");
+    printf("GAME OF LIFE\a ... generation %d\n", g);
+    int n;
     for(int i = 0; i< ROWS; i++){
         for(int j = 0; j<COLS;j++){
             if(world[i][j]==-1) printf("X");
-            else if(world[i][j]==1){printf("#");}
+            else if(world[i][j]==1){
+                printf("0",n);
+            }
             else{printf(" ");}
         }
         printf("\n");
@@ -121,10 +129,10 @@ int countNeighbours(int x, int y){
 		[ ] [X] [ ]
 		[ ] [ ] [ ]
 	*/
-	for(i=y-1;i<y+2;i++){
-        for(j=x-1;j<x+2;j++){
+	for(j=y-1;j<y+2;j++){
+        for(i=x-1;i<x+2;i++){
             if (i==x && j==y) continue;
-            if (world[i][j] == 1) n++;
+            if ((world[i][j] != -1) && (world[i][j]==1)) n+=1;
         }
 	}
 	return n;
